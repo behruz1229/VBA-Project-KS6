@@ -3,18 +3,18 @@ Option Explicit
 
 Public gAddedCount As Long
 Public gOutdatedCount As Long
-Public wbRcv As Workbook ' Глобальная ссылка на файл-приёмник
+Public wbRcv As Workbook ' Р“Р»РѕР±Р°Р»СЊРЅР°СЏ СЃСЃС‹Р»РєР° РЅР° С„Р°Р№Р»-РїСЂРёС‘РјРЅРёРє
 
-' ================= ГЛАВНЫЙ ЗАПУСК =================
+' ================= Р“Р›РђР’РќР«Р™ Р—РђРџРЈРЎРљ =================
 Public Sub MainUpdate()
     Dim tStart As Double: tStart = CDbl(Now)
     
-    ' Сохраняем ссылку на приёмник сразу, чтобы не зависеть от ActiveWorkbook
+    ' РЎРѕС…СЂР°РЅСЏРµРј СЃСЃС‹Р»РєСѓ РЅР° РїСЂРёС‘РјРЅРёРє СЃСЂР°Р·Сѓ, С‡С‚РѕР±С‹ РЅРµ Р·Р°РІРёСЃРµС‚СЊ РѕС‚ ActiveWorkbook
     On Error Resume Next
     Set wbRcv = ActiveWorkbook
     On Error GoTo 0
     If wbRcv Is Nothing Then
-        MsgBox "Не удалось определить активный файл-приёмник. Запустите макрос из него.", vbCritical
+        MsgBox "РќРµ СѓРґР°Р»РѕСЃСЊ РѕРїСЂРµРґРµР»РёС‚СЊ Р°РєС‚РёРІРЅС‹Р№ С„Р°Р№Р»-РїСЂРёС‘РјРЅРёРє. Р—Р°РїСѓСЃС‚РёС‚Рµ РјР°РєСЂРѕСЃ РёР· РЅРµРіРѕ.", vbCritical
         Exit Sub
     End If
     
@@ -27,8 +27,8 @@ Public Sub MainUpdate()
     
     On Error GoTo ErrHandler
     
-    UpdateProgress 0, "Инициализация процесса"
-    Debug.Print "[Main] Приёмник: " & wbRcv.Name
+    UpdateProgress 0, "РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РїСЂРѕС†РµСЃСЃР°"
+    Debug.Print "[Main] РџСЂРёС‘РјРЅРёРє: " & wbRcv.Name
     Module1_Sync
     Module2_UpdateInspections
     
@@ -36,15 +36,15 @@ Public Sub MainUpdate()
     Dim timeStr As String
     timeStr = Int(elapsedSec / 3600) & ":" & Format((elapsedSec Mod 3600) / 60, "00") & ":" & Format(elapsedSec Mod 60, "00")
     
-    MsgBox "Обновление завершено!" & vbCrLf & _
-           "? Время выполнения: " & timeStr & vbCrLf & _
-           "? Добавлено строк: " & gAddedCount & vbCrLf & _
-           "?? Устаревших строк: " & gOutdatedCount, vbInformation, "Результат"
+    MsgBox "РћР±РЅРѕРІР»РµРЅРёРµ Р·Р°РІРµСЂС€РµРЅРѕ!" & vbCrLf & _
+           "? Р’СЂРµРјСЏ РІС‹РїРѕР»РЅРµРЅРёСЏ: " & timeStr & vbCrLf & _
+           "? Р”РѕР±Р°РІР»РµРЅРѕ СЃС‚СЂРѕРє: " & gAddedCount & vbCrLf & _
+           "?? РЈСЃС‚Р°СЂРµРІС€РёС… СЃС‚СЂРѕРє: " & gOutdatedCount, vbInformation, "Р РµР·СѓР»СЊС‚Р°С‚"
     
     GoTo CleanUp
     
 ErrHandler:
-    MsgBox "Произошла ошибка: " & Err.Description & vbCrLf & "Модуль: " & Err.Source, vbCritical, "Ошибка"
+    MsgBox "РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР°: " & Err.Description & vbCrLf & "РњРѕРґСѓР»СЊ: " & Err.Source, vbCritical, "РћС€РёР±РєР°"
     
 CleanUp:
     With Application
@@ -55,11 +55,11 @@ CleanUp:
     End With
 End Sub
 
-' ================= МОДУЛЬ 1: СИНХРОНИЗАЦИЯ =================
+' ================= РњРћР”РЈР›Р¬ 1: РЎРРќРҐР РћРќРР—РђР¦РРЇ =================
 Private Sub Module1_Sync()
-    UpdateProgress 5, "Чтение файла-приёмника"
+    UpdateProgress 5, "Р§С‚РµРЅРёРµ С„Р°Р№Р»Р°-РїСЂРёС‘РјРЅРёРєР°"
     Dim wsRcv As Worksheet
-    Set wsRcv = GetSheetSafe(wbRcv, "ТСБиМОТ")
+    Set wsRcv = GetSheetSafe(wbRcv, "РўРЎР‘РёРњРћРў")
     If wsRcv Is Nothing Then Exit Sub
     
     Dim lrRcv As Long: lrRcv = wsRcv.Cells(wsRcv.Rows.Count, 1).End(xlUp).Row
@@ -73,26 +73,26 @@ Private Sub Module1_Sync()
     For i = 1 To totalRcv
         k = MakeKey(arrRcv(i, 1), arrRcv(i, 3), arrRcv(i, 4), arrRcv(i, 6), arrRcv(i, 7))
         If k <> "" And Not dictRcv.Exists(k) Then dictRcv.Add k, i + 2
-        If i Mod 5000 = 0 Then UpdateProgress 5 + Int(i / totalRcv * 5), "Чтение приёмника: " & i
+        If i Mod 5000 = 0 Then UpdateProgress 5 + Int(i / totalRcv * 5), "Р§С‚РµРЅРёРµ РїСЂРёС‘РјРЅРёРєР°: " & i
     Next i
-    UpdateProgress 10, "Словарь приёмника построен (" & dictRcv.Count & " ключей)"
-    Debug.Print "[Module1] Приёмник: " & dictRcv.Count & " уникальных ключей."
+    UpdateProgress 10, "РЎР»РѕРІР°СЂСЊ РїСЂРёС‘РјРЅРёРєР° РїРѕСЃС‚СЂРѕРµРЅ (" & dictRcv.Count & " РєР»СЋС‡РµР№)"
+    Debug.Print "[Module1] РџСЂРёС‘РјРЅРёРє: " & dictRcv.Count & " СѓРЅРёРєР°Р»СЊРЅС‹С… РєР»СЋС‡РµР№."
     
     Dim srcFiles(1 To 2) As String, srcSheets(1 To 2) As String
-    srcFiles(1) = "Ведомость элементов МК МОТ.xlsb": srcSheets(1) = "База данных по элементам"
-    srcFiles(2) = "Ведомость элементов МК ТСБ.xlsb": srcSheets(2) = "База данных по элементам"
-    Const srcDir As String = "\\vls.lan\ULVZG-DFS\ПТС\1.14. ТСБ и МОТ_Исполнительная документация КМ\!Ведомость элементов\"
+    srcFiles(1) = "Р’РµРґРѕРјРѕСЃС‚СЊ СЌР»РµРјРµРЅС‚РѕРІ РњРљ РњРћРў.xlsb": srcSheets(1) = "Р‘Р°Р·Р° РґР°РЅРЅС‹С… РїРѕ СЌР»РµРјРµРЅС‚Р°Рј"
+    srcFiles(2) = "Р’РµРґРѕРјРѕСЃС‚СЊ СЌР»РµРјРµРЅС‚РѕРІ РњРљ РўРЎР‘.xlsb": srcSheets(2) = "Р‘Р°Р·Р° РґР°РЅРЅС‹С… РїРѕ СЌР»РµРјРµРЅС‚Р°Рј"
+    Const srcDir As String = "\\vls.lan\ULVZG-DFS\РџРўРЎ\1.14. РўРЎР‘ Рё РњРћРў_РСЃРїРѕР»РЅРёС‚РµР»СЊРЅР°СЏ РґРѕРєСѓРјРµРЅС‚Р°С†РёСЏ РљРњ\!Р’РµРґРѕРјРѕСЃС‚СЊ СЌР»РµРјРµРЅС‚РѕРІ\"
     
     Dim dictSrc As Object: Set dictSrc = CreateObject("Scripting.Dictionary")
     Dim newRows As New Collection
     Dim s As Integer
     
     For s = 1 To 2
-        UpdateProgress 10 + s * 10, "Подготовка источника: " & srcFiles(s)
+        UpdateProgress 10 + s * 10, "РџРѕРґРіРѕС‚РѕРІРєР° РёСЃС‚РѕС‡РЅРёРєР°: " & srcFiles(s)
         Dim fPath As String: fPath = srcDir & srcFiles(s)
         
         If Dir(fPath) = "" Then
-            fPath = Application.GetOpenFilename(FileFilter:="Excel файлы (*.xlsb), *.xlsb", Title:="Не найден: " & srcFiles(s) & ". Выберите вручную.")
+            fPath = Application.GetOpenFilename(FileFilter:="Excel С„Р°Р№Р»С‹ (*.xlsb), *.xlsb", Title:="РќРµ РЅР°Р№РґРµРЅ: " & srcFiles(s) & ". Р’С‹Р±РµСЂРёС‚Рµ РІСЂСѓС‡РЅСѓСЋ.")
             If fPath = "False" Then GoTo SkipSrc
         End If
         
@@ -111,7 +111,7 @@ Private Sub Module1_Sync()
         Dim totalSrc As Long: totalSrc = UBound(arrSrc, 1)
         Dim r As Long
         
-        UpdateProgress 15 + s * 10, "Сканирование: " & srcFiles(s)
+        UpdateProgress 15 + s * 10, "РЎРєР°РЅРёСЂРѕРІР°РЅРёРµ: " & srcFiles(s)
         For r = 1 To totalSrc
             If InStr(1, UCase(Trim(CStr(arrSrc(r, 1)))), "TQ", vbTextCompare) > 0 Then GoTo NextRow
             k = MakeKey(arrSrc(r, 1), arrSrc(r, 3), arrSrc(r, 4), arrSrc(r, 6), arrSrc(r, 7))
@@ -126,7 +126,7 @@ Private Sub Module1_Sync()
                     newRows.Add tmpRow
                 End If
             End If
-            If r Mod 5000 = 0 Then UpdateProgress 20 + s * 10 + Int(r / totalSrc * 15), "Источник " & s & ": " & r & "/" & totalSrc
+            If r Mod 5000 = 0 Then UpdateProgress 20 + s * 10 + Int(r / totalSrc * 15), "РСЃС‚РѕС‡РЅРёРє " & s & ": " & r & "/" & totalSrc
 NextRow:
         Next r
         wbSrc.Close False
@@ -135,7 +135,7 @@ SkipSrc:
     
     gAddedCount = newRows.Count
     If gAddedCount > 0 Then
-        UpdateProgress 55, "Вставка " & gAddedCount & " новых строк"
+        UpdateProgress 55, "Р’СЃС‚Р°РІРєР° " & gAddedCount & " РЅРѕРІС‹С… СЃС‚СЂРѕРє"
         Dim newArr() As Variant: ReDim newArr(1 To gAddedCount, 1 To 10)
         Dim idx As Long
         For idx = 1 To gAddedCount
@@ -147,7 +147,7 @@ SkipSrc:
         lrRcv = wsRcv.Cells(wsRcv.Rows.Count, 1).End(xlUp).Row
     End If
     
-    UpdateProgress 70, "Поиск устаревших строк"
+    UpdateProgress 70, "РџРѕРёСЃРє СѓСЃС‚Р°СЂРµРІС€РёС… СЃС‚СЂРѕРє"
     Dim outdatedRows As New Collection, key
     For Each key In dictRcv.Keys
         If Not dictSrc.Exists(key) Then outdatedRows.Add dictRcv(key)
@@ -159,18 +159,18 @@ SkipSrc:
         For Each ou In outdatedRows
             stepOut = stepOut + 1
             wsRcv.Range("A" & ou & ":P" & ou).Interior.color = RGB(255, 153, 0)
-            If stepOut Mod 5000 = 0 Then UpdateProgress 80, "Покраска устаревших: " & stepOut
+            If stepOut Mod 5000 = 0 Then UpdateProgress 80, "РџРѕРєСЂР°СЃРєР° СѓСЃС‚Р°СЂРµРІС€РёС…: " & stepOut
         Next ou
     End If
     
-    UpdateProgress 95, "Применение формата даты"
+    UpdateProgress 95, "РџСЂРёРјРµРЅРµРЅРёРµ С„РѕСЂРјР°С‚Р° РґР°С‚С‹"
     wsRcv.Range("I3:I" & lrRcv).NumberFormat = "dd.mm.yyyy"
     
-    UpdateProgress 100, "Модуль 1 завершён"
-    Debug.Print "[Module1] Готово. Добавлено: " & gAddedCount & ", Устаревших: " & gOutdatedCount
+    UpdateProgress 100, "РњРѕРґСѓР»СЊ 1 Р·Р°РІРµСЂС€С‘РЅ"
+    Debug.Print "[Module1] Р“РѕС‚РѕРІРѕ. Р”РѕР±Р°РІР»РµРЅРѕ: " & gAddedCount & ", РЈСЃС‚Р°СЂРµРІС€РёС…: " & gOutdatedCount
 End Sub
 
-' ================= МОДУЛЬ 2: ИНСПЕКЦИИ =================
+' ================= РњРћР”РЈР›Р¬ 2: РРќРЎРџР•РљР¦РР =================
 Private Sub Module2_UpdateInspections()
     Dim wsInsp As Worksheet, wbInsp As Workbook, wsRcv As Worksheet
     Dim lrInsp As Long, lrRcv As Long
@@ -182,12 +182,12 @@ Private Sub Module2_UpdateInspections()
     
     On Error GoTo ErrHandler
     
-    UpdateProgress 5, "Поиск файла инспекций"
-    inspDir = "\\vls.lan\ULVZG-DFS\ПТС\1.14. ТСБ и МОТ_Исполнительная документация КМ\Выгрузки\RFI\"
-    latestFile = GetLatestModifiedFile(inspDir, "Инспекции на *.xlsx")
+    UpdateProgress 5, "РџРѕРёСЃРє С„Р°Р№Р»Р° РёРЅСЃРїРµРєС†РёР№"
+    inspDir = "\\vls.lan\ULVZG-DFS\РџРўРЎ\1.14. РўРЎР‘ Рё РњРћРў_РСЃРїРѕР»РЅРёС‚РµР»СЊРЅР°СЏ РґРѕРєСѓРјРµРЅС‚Р°С†РёСЏ РљРњ\Р’С‹РіСЂСѓР·РєРё\RFI\"
+    latestFile = GetLatestModifiedFile(inspDir, "РРЅСЃРїРµРєС†РёРё РЅР° *.xlsx")
     
     If latestFile = "" Then
-        latestFile = Application.GetOpenFilename(FileFilter:="Excel файлы (*.xlsx), *.xlsx", Title:="Файл инспекций не найден. Выберите вручную.")
+        latestFile = Application.GetOpenFilename(FileFilter:="Excel С„Р°Р№Р»С‹ (*.xlsx), *.xlsx", Title:="Р¤Р°Р№Р» РёРЅСЃРїРµРєС†РёР№ РЅРµ РЅР°Р№РґРµРЅ. Р’С‹Р±РµСЂРёС‚Рµ РІСЂСѓС‡РЅСѓСЋ.")
         If latestFile = "False" Then Exit Sub
     Else
         latestFile = inspDir & latestFile
@@ -199,10 +199,10 @@ Private Sub Module2_UpdateInspections()
     On Error GoTo ErrHandler
     If wbInsp Is Nothing Then Set wbInsp = Workbooks.Open(latestFile, ReadOnly:=True)
     
-    UpdateProgress 15, "Чтение данных инспекций"
+    UpdateProgress 15, "Р§С‚РµРЅРёРµ РґР°РЅРЅС‹С… РёРЅСЃРїРµРєС†РёР№"
     Set wsInsp = wbInsp.Sheets(1)
     lrInsp = wsInsp.Cells(wsInsp.Rows.Count, 1).End(xlUp).Row
-    Debug.Print "[M2] Конец по столбцу A: " & lrInsp
+    Debug.Print "[M2] РљРѕРЅРµС† РїРѕ СЃС‚РѕР»Р±С†Сѓ A: " & lrInsp
     If lrInsp < 3 Then wbInsp.Close False: Exit Sub
     
     vC = wsInsp.Range("C3:C" & lrInsp).Value2
@@ -212,27 +212,27 @@ Private Sub Module2_UpdateInspections()
     
     totalInsp = UBound(vC, 1)
     If UBound(vAH, 1) < totalInsp Then totalInsp = UBound(vAH, 1)
-    Debug.Print "[M2] vC строк: " & UBound(vC, 1) & " | vAH строк: " & UBound(vAH, 1) & " | Цикл до: " & totalInsp
+    Debug.Print "[M2] vC СЃС‚СЂРѕРє: " & UBound(vC, 1) & " | vAH СЃС‚СЂРѕРє: " & UBound(vAH, 1) & " | Р¦РёРєР» РґРѕ: " & totalInsp
     
     Set dictInsp = CreateObject("Scripting.Dictionary")
     For i = 1 To totalInsp
         keyC = Trim(CStr(vC(i, 1)))
         If keyC <> "" Then dictInsp(keyC) = vAH(i, 1)
-        If i Mod 5000 = 0 Then UpdateProgress 20 + Int(i / totalInsp * 15), "Чтение инспекций: " & i
+        If i Mod 5000 = 0 Then UpdateProgress 20 + Int(i / totalInsp * 15), "Р§С‚РµРЅРёРµ РёРЅСЃРїРµРєС†РёР№: " & i
     Next i
-    Debug.Print "[M2] Словарь инспекций готов. Ключей: " & dictInsp.Count
+    Debug.Print "[M2] РЎР»РѕРІР°СЂСЊ РёРЅСЃРїРµРєС†РёР№ РіРѕС‚РѕРІ. РљР»СЋС‡РµР№: " & dictInsp.Count
     
-    UpdateProgress 40, "Сопоставление с приёмником"
-    Debug.Print "[M2] Поиск листа приёмника..."
-    Set wsRcv = GetSheetSafe(wbRcv, "ТСБиМОТ") ' Используем сохранённую ссылку!
+    UpdateProgress 40, "РЎРѕРїРѕСЃС‚Р°РІР»РµРЅРёРµ СЃ РїСЂРёС‘РјРЅРёРєРѕРј"
+    Debug.Print "[M2] РџРѕРёСЃРє Р»РёСЃС‚Р° РїСЂРёС‘РјРЅРёРєР°..."
+    Set wsRcv = GetSheetSafe(wbRcv, "РўРЎР‘РёРњРћРў") ' РСЃРїРѕР»СЊР·СѓРµРј СЃРѕС…СЂР°РЅС‘РЅРЅСѓСЋ СЃСЃС‹Р»РєСѓ!
     If wsRcv Is Nothing Then
-        MsgBox "Лист 'ТСБиМОТ' не найден в файле-приёмнике!", vbCritical
+        MsgBox "Р›РёСЃС‚ 'РўРЎР‘РёРњРћРў' РЅРµ РЅР°Р№РґРµРЅ РІ С„Р°Р№Р»Рµ-РїСЂРёС‘РјРЅРёРєРµ!", vbCritical
         Exit Sub
     End If
-    Debug.Print "[M2] Лист найден. Вычисление последней строки..."
+    Debug.Print "[M2] Р›РёСЃС‚ РЅР°Р№РґРµРЅ. Р’С‹С‡РёСЃР»РµРЅРёРµ РїРѕСЃР»РµРґРЅРµР№ СЃС‚СЂРѕРєРё..."
     
     lrRcv = wsRcv.Cells(wsRcv.Rows.Count, 1).End(xlUp).Row
-    Debug.Print "[M2] Приёмник строк (по A): " & lrRcv
+    Debug.Print "[M2] РџСЂРёС‘РјРЅРёРє СЃС‚СЂРѕРє (РїРѕ A): " & lrRcv
     If lrRcv < 3 Then Exit Sub
     
     vJ = wsRcv.Range("J3:J" & lrRcv).Value2
@@ -242,12 +242,12 @@ Private Sub Module2_UpdateInspections()
     
     totalMatch = UBound(vJ, 1)
     If UBound(vK, 1) < totalMatch Then totalMatch = UBound(vK, 1)
-    Debug.Print "[M2] vJ строк: " & UBound(vJ, 1) & " | vK строк: " & UBound(vK, 1) & " | Цикл до: " & totalMatch
+    Debug.Print "[M2] vJ СЃС‚СЂРѕРє: " & UBound(vJ, 1) & " | vK СЃС‚СЂРѕРє: " & UBound(vK, 1) & " | Р¦РёРєР» РґРѕ: " & totalMatch
     
     matchCnt = 0
     For i = 1 To totalMatch
         If i > UBound(vJ, 1) Or i > UBound(vK, 1) Then
-            Debug.Print "[M2] ?? SAFETY EXIT: i=" & i & " превышает границы массивов"
+            Debug.Print "[M2] ?? SAFETY EXIT: i=" & i & " РїСЂРµРІС‹С€Р°РµС‚ РіСЂР°РЅРёС†С‹ РјР°СЃСЃРёРІРѕРІ"
             Exit For
         End If
         
@@ -257,39 +257,39 @@ Private Sub Module2_UpdateInspections()
             matchCnt = matchCnt + 1
         End If
         
-        If i Mod 5000 = 0 Then UpdateProgress 50 + Int(i / totalMatch * 45), "Сопоставление: " & i & "/" & totalMatch
+        If i Mod 5000 = 0 Then UpdateProgress 50 + Int(i / totalMatch * 45), "РЎРѕРїРѕСЃС‚Р°РІР»РµРЅРёРµ: " & i & "/" & totalMatch
     Next i
-    Debug.Print "[M2] Цикл завершён. Найдено совпадений: " & matchCnt
+    Debug.Print "[M2] Р¦РёРєР» Р·Р°РІРµСЂС€С‘РЅ. РќР°Р№РґРµРЅРѕ СЃРѕРІРїР°РґРµРЅРёР№: " & matchCnt
     
     If totalMatch > 0 Then wsRcv.Range("K3").Resize(totalMatch, 1).Value = vK
     wbInsp.Close False
-    UpdateProgress 100, "Модуль 2 завершён"
+    UpdateProgress 100, "РњРѕРґСѓР»СЊ 2 Р·Р°РІРµСЂС€С‘РЅ"
     Exit Sub
 
 ErrHandler:
     Dim logMsg As String
-    logMsg = "=== ОТЛАДОЧНЫЙ ЛОГ ОШИБКИ ===" & vbCrLf & _
+    logMsg = "=== РћРўР›РђР”РћР§РќР«Р™ Р›РћР“ РћРЁРР‘РљР ===" & vbCrLf & _
              "Err: " & Err.Number & " - " & Err.Description & vbCrLf & _
-             "Текущий шаг i: " & i & vbCrLf & _
-             "vJ граница(строк): " & IIf(IsArray(vJ), UBound(vJ, 1), "Скаляр") & vbCrLf & _
-             "vK граница(строк): " & IIf(IsArray(vK), UBound(vK, 1), "Скаляр") & vbCrLf & _
-             "Цикл должен идти до: " & totalMatch & vbCrLf & _
-             "dictInsp.Count: " & IIf(Not dictInsp Is Nothing, dictInsp.Count, "Не создан") & vbCrLf & _
-             "Последнее jVal: """ & jVal & """" & vbCrLf & _
-             "Ключ в словаре: " & IIf(Not dictInsp Is Nothing, dictInsp.Exists(jVal), "N/A")
+             "РўРµРєСѓС‰РёР№ С€Р°Рі i: " & i & vbCrLf & _
+             "vJ РіСЂР°РЅРёС†Р°(СЃС‚СЂРѕРє): " & IIf(IsArray(vJ), UBound(vJ, 1), "РЎРєР°Р»СЏСЂ") & vbCrLf & _
+             "vK РіСЂР°РЅРёС†Р°(СЃС‚СЂРѕРє): " & IIf(IsArray(vK), UBound(vK, 1), "РЎРєР°Р»СЏСЂ") & vbCrLf & _
+             "Р¦РёРєР» РґРѕР»Р¶РµРЅ РёРґС‚Рё РґРѕ: " & totalMatch & vbCrLf & _
+             "dictInsp.Count: " & IIf(Not dictInsp Is Nothing, dictInsp.Count, "РќРµ СЃРѕР·РґР°РЅ") & vbCrLf & _
+             "РџРѕСЃР»РµРґРЅРµРµ jVal: """ & jVal & """" & vbCrLf & _
+             "РљР»СЋС‡ РІ СЃР»РѕРІР°СЂРµ: " & IIf(Not dictInsp Is Nothing, dictInsp.Exists(jVal), "N/A")
              
     Debug.Print logMsg
-    MsgBox logMsg, vbCritical, "Детальная диагностика Module2"
+    MsgBox logMsg, vbCritical, "Р”РµС‚Р°Р»СЊРЅР°СЏ РґРёР°РіРЅРѕСЃС‚РёРєР° Module2"
 End Sub
 
-' ================= ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =================
+' ================= Р’РЎРџРћРњРћР“РђРўР•Р›Р¬РќР«Р• Р¤РЈРќРљР¦РР =================
 Public Sub UpdateProgress(pct As Integer, msg As String)
-    Application.StatusBar = "Выполняется: " & msg & " [" & pct & "%]"
+    Application.StatusBar = "Р’С‹РїРѕР»РЅСЏРµС‚СЃСЏ: " & msg & " [" & pct & "%]"
     Debug.Print "[" & Format(Now, "hh:mm:ss") & "] " & msg & " (" & pct & "%)"
     DoEvents
 End Sub
 
-' Безопасный поиск листа (игнорирует регистр и пробелы)
+' Р‘РµР·РѕРїР°СЃРЅС‹Р№ РїРѕРёСЃРє Р»РёСЃС‚Р° (РёРіРЅРѕСЂРёСЂСѓРµС‚ СЂРµРіРёСЃС‚СЂ Рё РїСЂРѕР±РµР»С‹)
 Private Function GetSheetSafe(wb As Workbook, sheetName As String) As Worksheet
     Dim ws As Worksheet, cleanName As String, cleanSearch As String
     cleanSearch = Trim(LCase(sheetName))
@@ -300,7 +300,7 @@ Private Function GetSheetSafe(wb As Workbook, sheetName As String) As Worksheet
             Exit Function
         End If
     Next ws
-    ' Fallback: пробуем прямой доступ, если цикл не сработал
+    ' Fallback: РїСЂРѕР±СѓРµРј РїСЂСЏРјРѕР№ РґРѕСЃС‚СѓРї, РµСЃР»Рё С†РёРєР» РЅРµ СЃСЂР°Р±РѕС‚Р°Р»
     On Error Resume Next
     Set GetSheetSafe = wb.Sheets(sheetName)
     On Error GoTo 0

@@ -3,36 +3,36 @@ Sub ExportAllVBA()
     Dim vbComp As Object
     Dim filePath As String
     
-    ' Папка, куда сохранятся файлы. Можно изменить на свою, например "C:\VBA_Export\"
+    ' РџР°РїРєР°, РєСѓРґР° СЃРѕС…СЂР°РЅСЏС‚СЃСЏ С„Р°Р№Р»С‹. РњРѕР¶РЅРѕ РёР·РјРµРЅРёС‚СЊ РЅР° СЃРІРѕСЋ, РЅР°РїСЂРёРјРµСЂ "C:\VBA_Export\"
     filePath = ActiveWorkbook.Path & "\VBA_Export_" & Format(Now, "yyyymmdd_hhnnss") & "\"
     
-    ' Создаем папку, если её нет
+    ' РЎРѕР·РґР°РµРј РїР°РїРєСѓ, РµСЃР»Рё РµС‘ РЅРµС‚
     On Error Resume Next
     MkDir filePath
     On Error GoTo 0
     
-    ' Проходим по всем компонентам VBA проекта
+    ' РџСЂРѕС…РѕРґРёРј РїРѕ РІСЃРµРј РєРѕРјРїРѕРЅРµРЅС‚Р°Рј VBA РїСЂРѕРµРєС‚Р°
     For Each vbComp In ActiveWorkbook.VBProject.VBComponents
         Dim exportName As String
         exportName = filePath & vbComp.Name
         
-        ' Добавляем правильное расширение в зависимости от типа компонента
+        ' Р”РѕР±Р°РІР»СЏРµРј РїСЂР°РІРёР»СЊРЅРѕРµ СЂР°СЃС€РёСЂРµРЅРёРµ РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ С‚РёРїР° РєРѕРјРїРѕРЅРµРЅС‚Р°
         Select Case vbComp.Type
-            Case 1: exportName = exportName & ".bas"  ' Обычный модуль
-            Case 2: exportName = exportName & ".cls"  ' Модуль класса
-            Case 3: exportName = exportName & ".frm"  ' Форма (UserForm)
-            Case 100: exportName = exportName & ".cls" ' Модуль листа или книги (тоже класс)
+            Case 1: exportName = exportName & ".bas"  ' РћР±С‹С‡РЅС‹Р№ РјРѕРґСѓР»СЊ
+            Case 2: exportName = exportName & ".cls"  ' РњРѕРґСѓР»СЊ РєР»Р°СЃСЃР°
+            Case 3: exportName = exportName & ".frm"  ' Р¤РѕСЂРјР° (UserForm)
+            Case 100: exportName = exportName & ".cls" ' РњРѕРґСѓР»СЊ Р»РёСЃС‚Р° РёР»Рё РєРЅРёРіРё (С‚РѕР¶Рµ РєР»Р°СЃСЃ)
             Case Else: exportName = exportName & ".bas"
         End Select
         
-        ' Экспортируем компонент
+        ' Р­РєСЃРїРѕСЂС‚РёСЂСѓРµРј РєРѕРјРїРѕРЅРµРЅС‚
         On Error Resume Next
         vbComp.Export exportName
         If Err.Number <> 0 Then
-            Debug.Print "Ошибка экспорта " & vbComp.Name & ": " & Err.Description
+            Debug.Print "РћС€РёР±РєР° СЌРєСЃРїРѕСЂС‚Р° " & vbComp.Name & ": " & Err.Description
         End If
         On Error GoTo 0
     Next vbComp
     
-    MsgBox "Готово! Все модули экспортированы в папку:" & vbCrLf & filePath
+    MsgBox "Р“РѕС‚РѕРІРѕ! Р’СЃРµ РјРѕРґСѓР»Рё СЌРєСЃРїРѕСЂС‚РёСЂРѕРІР°РЅС‹ РІ РїР°РїРєСѓ:" & vbCrLf & filePath
 End Sub

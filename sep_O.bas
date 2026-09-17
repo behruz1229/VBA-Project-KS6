@@ -3,7 +3,7 @@ Sub ConcatColumnsToO()
     Dim ws As Worksheet
     Set ws = ActiveSheet
     
-    ' Определяем последнюю заполненную строку по столбцам A, C, D, F
+    ' РћРїСЂРµРґРµР»СЏРµРј РїРѕСЃР»РµРґРЅСЋСЋ Р·Р°РїРѕР»РЅРµРЅРЅСѓСЋ СЃС‚СЂРѕРєСѓ РїРѕ СЃС‚РѕР»Р±С†Р°Рј A, C, D, F
     Dim lastRow As Long
     lastRow = Application.Max( _
         ws.Cells(ws.Rows.Count, "A").End(xlUp).Row, _
@@ -11,13 +11,13 @@ Sub ConcatColumnsToO()
         ws.Cells(ws.Rows.Count, "D").End(xlUp).Row, _
         ws.Cells(ws.Rows.Count, "F").End(xlUp).Row)
     
-    ' Если данные заканчиваются раньше 3-й строки, выходим
+    ' Р•СЃР»Рё РґР°РЅРЅС‹Рµ Р·Р°РєР°РЅС‡РёРІР°СЋС‚СЃСЏ СЂР°РЅСЊС€Рµ 3-Р№ СЃС‚СЂРѕРєРё, РІС‹С…РѕРґРёРј
     If lastRow < 3 Then
-        MsgBox "Данные начинаются выше 3-й строки или отсутствуют.", vbInformation
+        MsgBox "Р”Р°РЅРЅС‹Рµ РЅР°С‡РёРЅР°СЋС‚СЃСЏ РІС‹С€Рµ 3-Р№ СЃС‚СЂРѕРєРё РёР»Рё РѕС‚СЃСѓС‚СЃС‚РІСѓСЋС‚.", vbInformation
         Exit Sub
     End If
     
-    ' Считываем нужные диапазоны в массивы для быстродействия
+    ' РЎС‡РёС‚С‹РІР°РµРј РЅСѓР¶РЅС‹Рµ РґРёР°РїР°Р·РѕРЅС‹ РІ РјР°СЃСЃРёРІС‹ РґР»СЏ Р±С‹СЃС‚СЂРѕРґРµР№СЃС‚РІРёСЏ
     Dim arrA, arrB, arrC, arrD, arrE, arrF, arrOut
     arrA = ws.Range("A3:A" & lastRow).Value
     arrC = ws.Range("C3:C" & lastRow).Value
@@ -25,17 +25,17 @@ Sub ConcatColumnsToO()
     arrF = ws.Range("F3:F" & lastRow).Value
     
     Dim i As Long, numRows As Long
-    numRows = lastRow - 2               ' количество строк, начиная с 3-й
-    ReDim arrOut(1 To numRows, 1 To 1)  ' массив для результатов
+    numRows = lastRow - 2               ' РєРѕР»РёС‡РµСЃС‚РІРѕ СЃС‚СЂРѕРє, РЅР°С‡РёРЅР°СЏ СЃ 3-Р№
+    ReDim arrOut(1 To numRows, 1 To 1)  ' РјР°СЃСЃРёРІ РґР»СЏ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ
     
-    ' Склеиваем значения (без разделителей)
+    ' РЎРєР»РµРёРІР°РµРј Р·РЅР°С‡РµРЅРёСЏ (Р±РµР· СЂР°Р·РґРµР»РёС‚РµР»РµР№)
     For i = 1 To numRows
         arrOut(i, 1) = CStr(arrA(i, 1)) & "_" & CStr(arrC(i, 1)) & _
                        "_" & CStr(arrD(i, 1)) & "_" & CStr(arrF(i, 1))
     Next i
     
-    ' Вставляем результат как значения в столбец O
+    ' Р’СЃС‚Р°РІР»СЏРµРј СЂРµР·СѓР»СЊС‚Р°С‚ РєР°Рє Р·РЅР°С‡РµРЅРёСЏ РІ СЃС‚РѕР»Р±РµС† O
     ws.Range("O3:O" & lastRow).Value = arrOut
     
-    MsgBox "Готово! Сцепка вставлена в столбец O.", vbInformation
+    MsgBox "Р“РѕС‚РѕРІРѕ! РЎС†РµРїРєР° РІСЃС‚Р°РІР»РµРЅР° РІ СЃС‚РѕР»Р±РµС† O.", vbInformation
 End Sub
